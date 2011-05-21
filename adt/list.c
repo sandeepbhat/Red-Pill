@@ -1,5 +1,6 @@
 #include "list.h"
 #include "../redpill.h"
+#include "../memory.h"
 #include <stdlib.h>
 
 
@@ -8,7 +9,7 @@
 
 list *rplist_create(void *data)
 {
-    list *new = malloc(sizeof *new);
+    list *new = rp_malloc(sizeof *new, 0, 0);
 
     new->data = data;
     new->prev = new->next = 0;
@@ -31,14 +32,14 @@ void rplist_destroy(list **head, int destroydata)
     {
         for (; *head; *head = (*head)->next)
 	{
-	    free((*head)->data);
-	    free(*head);
+	    rp_free((*head)->data);
+	    rp_free(*head);
 	}
     }
     else
     {
         for (; *head; *head = (*head)->next)
-            free(*head);
+            rp_free(*head);
     }
 }
 
@@ -57,7 +58,7 @@ void *rplist_shift(list **head)
 
     void *data = todelete->data;
 	
-    free(todelete);
+    rp_free(todelete);
     return data;
 }
 
@@ -116,7 +117,7 @@ void *rplist_pop(list *head)
     if (head->prev)
         head->prev->next = 0;
 
-    free(head);
+    rp_free(head);
     return data;
 }
 
@@ -141,7 +142,7 @@ int rplist_remove(list **head, void *data, int destroydata)
         {
 	    if (destroydata) 
 	    {
-	        free(backwards->data);
+	        rp_free(backwards->data);
 		backwards->data = 0;
 	    }
 	    if (backwards->next)
@@ -149,7 +150,7 @@ int rplist_remove(list **head, void *data, int destroydata)
 	    if (backwards->prev)
                 backwards->prev->next = backwards->next;
 
-            free(backwards);
+            rp_free(backwards);
             return 1;
         }
     }
@@ -161,7 +162,7 @@ int rplist_remove(list **head, void *data, int destroydata)
         {
 	    if (destroydata) 
 	    {
-	        free(forward->data);
+	        rp_free(forward->data);
 		forward->data = 0;
 	    }
 	    if (forward->prev)
@@ -171,7 +172,7 @@ int rplist_remove(list **head, void *data, int destroydata)
             if (forward == *head)
 	        *head = (*head)->next;
 
-            free(forward);
+            rp_free(forward);
             return 1;
         }
     }
