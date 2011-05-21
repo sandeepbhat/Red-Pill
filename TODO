@@ -1,0 +1,4 @@
+- rp_readline() - use for rp_loadtxt()
+- apply const
+- consider restrict
+- add list, stack
