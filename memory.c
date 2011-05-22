@@ -73,12 +73,9 @@ void *rp_free(void *address)
     }
 
     if (deleteref(address))
-    {
-	printf("\n\tReference to %p deleted. Freeing it.", address);
         free(address);
-    }
     
-    return 0;
+    return NULL;
 }
 
 
@@ -145,7 +142,7 @@ static int deleteref(void *address)
     if (!memoryhash->buckets[bucketindex])
         return 0;
 
-    bucket *previous	= 0,
+    bucket *previous	= NULL,
         *current 	= memoryhash->buckets[bucketindex];
 
     while (current && current->address != address)
@@ -186,10 +183,10 @@ static int addref(void *address)
     if (!new)
 	ERROR(OUT_OF_MEMORY);
 
-    bucket **list	= &( memoryhash->buckets[bucketindex] );
-    new->address	= address;
-    new->next = *list;
-    *list = new;
+    bucket **list = &( memoryhash->buckets[bucketindex] );
+    new->address  = address;
+    new->next     = *list;
+    *list         = new;
 
     return 1;
 }
@@ -202,7 +199,7 @@ static void *getref(void *address)
     unsigned bucketindex = hash(address);
 
     if ( !memoryhash->buckets[bucketindex] )
-        return 0;
+        return NULL;
 
     else
     {
@@ -215,7 +212,7 @@ static void *getref(void *address)
             cursor = cursor->next
         );
 	
-	return (cursor) ? cursor : 0;
+	return (cursor) ? cursor : NULL;
     }
 }
 

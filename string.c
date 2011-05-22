@@ -34,7 +34,7 @@ int rp_strcopy(char *dest, char *src, unsigned int mbytes)
     for (count = 0; count < maxbytes - 1 && source[count]; count++)
         destination[count] = source[count];
 
-    destination[count] = 0;
+    destination[count] = '\0';
 
     return count;
 }
@@ -49,20 +49,20 @@ char **rp_tokenize(char *target, char *separators)
 
     register int i 		= 0;
 
-    register char *current	= 0, 
+    register char *current	= NULL, 
                 *str 	= target, 
                 *seps 	= separators,
-                **ret 	= rp_malloc(addresses * sizeof (char *), 0, 0);	
+                **ret 	= rp_malloc(addresses * sizeof (char *), NULL, NULL);	
 	
     // we're always splitting on the same separators
-    for (current = strtok(str, seps); current; current = strtok(0, seps), i++)
+    for (current = strtok(str, seps); current; current = strtok(NULL, seps), i++)
         ret[i] = current;
 
     // sinalize the end of the tokens
-    ret[i] = 0;
+    ret[i] = NULL;
 		
     // shrink to optimize memory usage
-    ret = rp_realloc(ret, (i + 1) * sizeof (char *), 0, 0);
+    ret = rp_realloc(ret, (i + 1) * sizeof (char *), NULL, NULL);
 
     return ret;
 }
@@ -75,10 +75,10 @@ char *rp_strreverse(const char *target)
     length         = strlen(target), 
     j              = length;
 
-    register char *ret       = rp_malloc(length + 1, 0, 0);
+    register char *ret       = rp_malloc(length + 1, NULL, NULL);
     register const char *str = target;
 
-    ret[length] = 0;
+    ret[length] = '\0';
 
     for (j--; j >= length / 2; i++, j--) 
     {
@@ -94,9 +94,10 @@ char *rp_strreverse(const char *target)
 
 char *rp_strdup(char *str)
 {
-	if (!str) return 0;
+	if (!str)
+	    return NULL;
 
-	char *ret = rp_malloc( strlen(str) + 1 , 0, 0);
+	char *ret = rp_malloc( strlen(str) + 1 , NULL, NULL);
 	strcpy(ret, str);
 
 	return ret;

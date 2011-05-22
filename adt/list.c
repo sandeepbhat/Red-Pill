@@ -9,10 +9,10 @@
 
 list *rplist_create(void *data)
 {
-    list *new = rp_malloc(sizeof *new, 0, 0);
+    list *new = rp_malloc(sizeof *new, NULL, NULL);
 
     new->data = data;
-    new->prev = new->next = 0;
+    new->prev = new->next = NULL;
 
     return new;
 }
@@ -51,7 +51,7 @@ void rplist_destroy(list **head, int destroydata)
 void *rplist_shift(list **head)
 {
     if (!head || !*head)
-        return 0;
+        return NULL;
 
     list *todelete = *head;
     *head = (*head)->next;
@@ -73,7 +73,7 @@ void rplist_unshift(list **head, void *data)
         return;	    
 
     list *new = rplist_create(data);
-    new->prev = 0;
+    new->prev = NULL;
     new->next = *head;
 
     (*head)->prev = new;
@@ -95,7 +95,7 @@ void rplist_push(list *head, void *data)
 
     head->next = rplist_create(data);
     head->next->prev = head;
-    head->next->next = 0;
+    head->next->next = NULL;
 }
 
 
@@ -107,7 +107,7 @@ void rplist_push(list *head, void *data)
 void *rplist_pop(list *head)
 {
     if (!head)
-        return 0;	    
+        return NULL;	    
 
     while (head->next)
         head = head->next;
@@ -115,7 +115,7 @@ void *rplist_pop(list *head)
     void *data = head->data;
 
     if (head->prev)
-        head->prev->next = 0;
+        head->prev->next = NULL;
 
     rp_free(head);
     return data;
@@ -143,7 +143,7 @@ int rplist_remove(list **head, void *data, int destroydata)
 	    if (destroydata) 
 	    {
 	        rp_free(backwards->data);
-		backwards->data = 0;
+		backwards->data = NULL;
 	    }
 	    if (backwards->next)
                 backwards->next->prev = backwards->prev;
@@ -163,7 +163,7 @@ int rplist_remove(list **head, void *data, int destroydata)
 	    if (destroydata) 
 	    {
 	        rp_free(forward->data);
-		forward->data = 0;
+		forward->data = NULL;
 	    }
 	    if (forward->prev)
                 forward->prev->next = forward->next;
@@ -190,7 +190,7 @@ void *rplist_get(list *head, unsigned int position)
     while (head && counter-- > 0)
         head = head->next;
 
-    return (counter == -1) ? head->data : 0;
+    return (counter == -1) ? head->data : NULL;
 }
 
 
