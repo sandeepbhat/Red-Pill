@@ -1,10 +1,11 @@
-// Todo: rp_readline - and use it for rp_loadtxt
-
 #include <stdio.h>
 #include "redpill.h"
 #include "io.h"
 
 
+// Given a pointer into the first string of an array of strings,
+// prints them to the given file stream, separating each string by
+// the string in sep.
 
 void rp_printstrings(char **strings, char *sep, FILE *stream)
 {
@@ -29,17 +30,63 @@ void rp_printstrings(char **strings, char *sep, FILE *stream)
 }
 
 
+// Similar to fgets, but returns the starting address of a buffer that grows dynamically
+// to accomodate all the input until a newline is found.
 
+char *rp_readline(FILE *fstream)
+{
+    int inputbyte;
+    size_t bytecapacity;
+    char *ret         = NULL;
+    unsigned currbyte = 0;
+
+    bytecapacity = LINE_SIZE;
+    ret          = rp_malloc(bytecapacity, NULL, NULL);
+
+    for
+    (
+        inputbyte = fgetc(fstream);
+        inputbyte != '\n' && inputbyte != EOF;
+        inputbyte = fgetc(fstream)
+    )
+    {
+        if (fstream == stdin && inputbyte == EOF)
+            ERROR("fgetc() returned EOF.");
+        if (currbyte >= bytecapacity)
+        {
+            bytecapacity *= 2;
+            ret	          = rp_realloc(ret, bytecapacity, NULL, NULL);
+        }
+
+        ret[currbyte++] = inputbyte;
+    }
+
+    if (inputbyte == EOF)
+	    return NULL;
+
+    // lets return an empty string... yay.
+    if (currbyte == 0) ret = rp_malloc(1, NULL, NULL);
+
+    ret[currbyte] = '\0';
+    return ret;
+}
+
+
+
+// Loads the entire content of a given text file, specified by
+// its relative path. Returns the pointer to the start of the
+// first string of the array of strings, each array representing
+// one line of the input file.
 
 char **rp_loadtxt(const char *filename)
 {
-    char **ret = 0;
-    int currline, currbyte, charcapacity, linecapacity, inputbyte;
+    char **ret = NULL;
+    int currline, linecapacity;
 
-    FILE *input = rp_fopen(filename, "r", 0, 0);
+    FILE *input = rp_fopen(filename, "r", NULL, NULL);
 
     linecapacity = LINE_COUNT_START;
-    ret          = rp_malloc(linecapacity * sizeof (char *), 0, 0);
+    ret          = rp_malloc(linecapacity * sizeof (char *), NULL, NULL);
 
     currline = 0;
 
@@ -48,32 +95,15 @@ char **rp_loadtxt(const char *filename)
         if (currline >= linecapacity)
         {
             linecapacity *= 2;
-            ret           = rp_realloc(ret, linecapacity * sizeof (char *), 0, 0);
+            ret           = rp_realloc(ret, linecapacity * sizeof (char *), NULL, NULL);
         }
 
-        charcapacity  = LINE_SIZE;
-        ret[currline] = rp_malloc(charcapacity, 0, 0);
-        currbyte      = 0;
-
-        for (inputbyte = fgetc(input); inputbyte != EOF && inputbyte != '\n'; inputbyte = fgetc(input))
-        {
-            if (currbyte >= charcapacity)
-            {
-                charcapacity  *= 2;
-                ret[currline]  = rp_realloc(ret[currline], charcapacity * sizeof (char *), 0, 0);
-            }
-
-            ret[currline][currbyte++] = (char) inputbyte;
-        }
-
-        ret[currline][currbyte]	= 0;
-        ret[currline] 		= rp_realloc(ret[currline], currbyte + 1, 0, 0);
-
+	ret[currline] = rp_readline(input);
         currline++;
     }
 
-    ret           = rp_realloc(ret, (currline + 2) * sizeof (char *), 0, 0);
-    ret[currline] = 0;
+    ret           = rp_realloc(ret, (currline + 2) * sizeof (char *), NULL, NULL);
+    ret[currline] = NULL;
 
     fclose(input);
     return ret;
@@ -81,17 +111,20 @@ char **rp_loadtxt(const char *filename)
 
 
 
+// Implements flexible behavior. Creates a single string containing
+// either a single line (if the given input stream is stdin) or the entire
+// content of a file (reads until it matches EOF).
 
 char *rp_readtext(FILE *fstream)
 {
     int inputbyte;
     size_t bytecapacity;
-    char *ret         = 0;
+    char *ret         = NULL;
     unsigned currbyte = 0;
 
 
     bytecapacity = LINE_SIZE;
-    ret          = rp_malloc(bytecapacity, 0, 0);
+    ret          = rp_malloc(bytecapacity, NULL, NULL);
 
     for
     (
@@ -112,11 +145,13 @@ char *rp_readtext(FILE *fstream)
     }
  
     // lets return an empty string... yay.
-    if (currbyte == 0) ret = rp_malloc(1, 0, 0);
+    if (currbyte == 0) ret = rp_malloc(1, NULL, NULL);
 
-    ret[currbyte] = 0;
+    ret[currbyte] = '\0';
     return ret;
 }
+
+
 
 
 FILE *rp_fopen(const char *filename, const char * mode, void (*errorhandler)(void *), void *errorstruct)

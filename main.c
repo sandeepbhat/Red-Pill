@@ -4,7 +4,10 @@
 int main(void)
 {
 
-	char **sourcecode = rp_loadtxt("teste.txt");
-	rp_printstrings(sourcecode, "\n", stdout);
+
+	char **code = rp_loadtxt("redpill.c");
+
+	rp_printstrings(code, "\n", stdout);
+
 	return 0;
 }
