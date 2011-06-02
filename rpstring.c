@@ -32,7 +32,7 @@ char *rp_join(const char *strs[], const char *glue)
 
 
 
-int rp_strfindequal(char *target, char **base)
+int rp_strfindequal(char *target, char *base[])
 {
     register char *str = target, **strbase = base;
 
