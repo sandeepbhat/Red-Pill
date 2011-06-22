@@ -1,4 +1,2 @@
-- rp_readline() - use for rp_loadtxt()
-- apply const
 - consider restrict
-- add list, stack
+- implement set of routines to redirect i/o via (FILE *) (rp_set_input, rp_set_output, printers, readers)

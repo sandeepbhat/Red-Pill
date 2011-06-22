@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "redpill.h"
+#include "rpstring.h"
 #include "io.h"
 
 
@@ -111,44 +112,14 @@ char **rp_loadtxt(const char *filename)
 
 
 
-// Implements flexible behavior. Creates a single string containing
-// either a single line (if the given input stream is stdin) or the entire
-// content of a file (reads until it matches EOF).
 
-char *rp_readtext(FILE *fstream)
+// Reads all the content from a text file, but returns
+// them in a single string, pointed to by its return value
+
+char *rp_slurp(const char *filename)
 {
-    int inputbyte;
-    size_t bytecapacity;
-    char *ret         = NULL;
-    unsigned currbyte = 0;
-
-
-    bytecapacity = LINE_SIZE;
-    ret          = rp_malloc(bytecapacity, NULL, NULL);
-
-    for
-    (
-        inputbyte = fgetc(fstream);
-        inputbyte != ( (fstream == stdin) ? '\n' : EOF );
-        inputbyte = fgetc(fstream)
-    )
-    {
-        if (fstream == stdin && inputbyte == EOF)
-            ERROR("fgetc() returned EOF.");
-        if (currbyte >= bytecapacity)
-        {
-            bytecapacity *= 2;
-            ret	          = rp_realloc(ret, bytecapacity, 0, 0);
-        }
-
-        ret[currbyte++] = inputbyte;
-    }
- 
-    // lets return an empty string... yay.
-    if (currbyte == 0) ret = rp_malloc(1, NULL, NULL);
-
-    ret[currbyte] = '\0';
-    return ret;
+    char **contents = rp_loadtxt(filename);
+    return rp_join(contents, "\n");
 }
 
 

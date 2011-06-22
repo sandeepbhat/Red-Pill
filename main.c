@@ -1,13 +1,19 @@
 #include "redpill.h"
 #include "io.h"
+#include "rpstring.h"
+
+
 
 int main(void)
 {
 
+    char *content = rp_slurp("csv.txt");
+    char **broken = rp_split(content, ",");
 
-	char **code = rp_loadtxt("redpill.c");
+    int i = 0;
+    for (; broken[i]; i++)
+	printf("\n\tString %u: %s", i, broken[i]);
 
-	rp_printstrings(code, "\n", stdout);
-
-	return 0;
+    printf("\n\n");
+    return 0;
 }

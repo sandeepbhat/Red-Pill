@@ -7,10 +7,10 @@
 
 int rp_strfindequal(char *, char *[]);
 int rp_strcopy(char *, char *, unsigned int);
-char **rp_tokenize(char *, char *);
-char *rp_strreverse(const char *);
+char *rp_strreverse(char *);
 char *rp_strdup(char *);
-char *rp_join (const char *[], const char *);
+char *rp_join(char *[], char *);
+char **rp_split(char *, char *);
 
 #endif
 

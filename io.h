@@ -4,8 +4,9 @@
 void rp_printstrings(char **, char *, FILE *);
 char *rp_readline(FILE *);
 char **rp_loadtxt(const char *);
-char *rp_readtext(FILE *);
+char *rp_slurp(const char *);
 FILE *rp_fopen(const char *, const char *, void (*)(void *), void *);
 long rp_filesize(const char *);
+
 
 #endif

@@ -3,7 +3,7 @@
 
 
 
-char *rp_join(const char *strs[], const char *glue)
+char *rp_join(char *strs[], char *glue)
 {
     char *result = NULL;
     
@@ -14,7 +14,7 @@ char *rp_join(const char *strs[], const char *glue)
 	int newstrlen = strlen(strs[i]);
 	lenres += newstrlen + gluelen + 1;
 
-	result = realloc(result, lenres);
+	result = rp_realloc(result, lenres, NULL, NULL);
 	strcpy(result + offset, strs[i]);
 
 	offset += newstrlen;
@@ -23,7 +23,7 @@ char *rp_join(const char *strs[], const char *glue)
 	offset += gluelen;
     }
 
-    result = realloc(result, lenres - gluelen);
+    result = rp_realloc(result, lenres - gluelen, NULL, NULL);
     result[ offset - gluelen ] = '\0';
 
     return result;
@@ -73,7 +73,7 @@ int rp_strcopy(char *dest, char *src, unsigned int mbytes)
 
 
 
-char **rp_tokenize(char *target, char *separators)
+char **rp_split(char *target, char *separators)
 {
     // worst-case scenario, so we don't have to check on every entry whether we have space
     register int addresses 	= strlen(target) / 2;
@@ -94,14 +94,13 @@ char **rp_tokenize(char *target, char *separators)
 		
     // shrink to optimize memory usage
     ret = rp_realloc(ret, (i + 1) * sizeof (char *), NULL, NULL);
-
     return ret;
 }
 
 
 
 
-char *rp_strreverse(const char *target)
+char *rp_strreverse(char *target)
 {
     register int i = 0,
     length         = strlen(target), 
