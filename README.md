@@ -20,5 +20,5 @@ Please refer to [LICENSE] [licence] for legal information.
 
 [licence]: https://github.com/guipn/Red-Pill/blob/master/README
 
-Guilherme P. N.
-http://guipn.com/
+[Guilherme P. N.] [my_site]
+[my_site]: http://guipn.com/
