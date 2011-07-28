@@ -16,16 +16,14 @@ void rp_printstrings(char **strings, char *sep, FILE *stream)
     	return;
     }
 
-    register unsigned int i;
-    register char **str    = strings;
-    register FILE *fstream = stream;
+    unsigned int i;
 
-    for (i = 0; str[i]; i++)
+    for (i = 0; strings[i]; i++)
     {
-        if ( fputs(str[i], fstream) == EOF ) 
+        if ( fputs(strings[i], stream) == EOF ) 
             WARNING("failed to print string to given stream via fputs()");
         if (sep)
-            if ( fputs(sep, fstream) == EOF )
+            if ( fputs(sep, stream) == EOF )
                 WARNING("failed to print separator string to given stream via fputs()");
     }
 }
@@ -36,13 +34,14 @@ void rp_printstrings(char **strings, char *sep, FILE *stream)
 
 char *rp_readline(FILE *fstream)
 {
-    int inputbyte;
-    size_t bytecapacity;
-    char *ret         = NULL;
-    unsigned currbyte = 0;
 
-    bytecapacity = LINE_SIZE;
-    ret          = rp_malloc(bytecapacity, NULL, NULL);
+    unsigned int currbyte = 0;
+
+    size_t bytecapacity = LINE_SIZE;
+
+    char *ret = rp_malloc(bytecapacity, NULL, NULL);
+
+    int inputbyte;
 
     for
     (
@@ -53,6 +52,7 @@ char *rp_readline(FILE *fstream)
     {
         if (fstream == stdin && inputbyte == EOF)
             ERROR("fgetc() returned EOF.");
+
         if (currbyte >= bytecapacity)
         {
             bytecapacity *= 2;
@@ -81,15 +81,12 @@ char *rp_readline(FILE *fstream)
 
 char **rp_loadtxt(const char *filename)
 {
-    char **ret = NULL;
-    int currline, linecapacity;
-
     FILE *input = rp_fopen(filename, "r", NULL, NULL);
 
-    linecapacity = LINE_COUNT_START;
-    ret          = rp_malloc(linecapacity * sizeof (char *), NULL, NULL);
+    int linecapacity = LINE_COUNT_START,
+	currline     = 0;
 
-    currline = 0;
+    char **ret = rp_malloc(linecapacity * sizeof (char *), NULL, NULL);
 
     while (!feof(input))
     {
@@ -118,8 +115,7 @@ char **rp_loadtxt(const char *filename)
 
 char *rp_slurp(const char *filename)
 {
-    char **contents = rp_loadtxt(filename);
-    return rp_join(contents, "\n");
+    return rp_join(rp_loadtxt(filename), "\n");
 }
 
 
@@ -127,9 +123,8 @@ char *rp_slurp(const char *filename)
 
 FILE *rp_fopen(const char *filename, const char * mode, void (*errorhandler)(void *), void *errorstruct)
 {
-    FILE *ret;
+    FILE *ret = fopen(filename, mode);
 
-    ret = fopen(filename, mode);
     if (!ret)
     {
         if (errorhandler)

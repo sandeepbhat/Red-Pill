@@ -2,19 +2,14 @@
 #include <time.h>
 
 
-static int seed;	// automatically initialized to 0 - defines whether srand() was called
-
-
-
-
-
-
-
-
+static int seed;
 
 
 int rp_randomint(int min, int max)
 {
+    if (max == min)
+	return max;
+
     if (!seed)
     {
         seed = 1;
@@ -22,7 +17,7 @@ int rp_randomint(int min, int max)
     }
 
     if (min > max) 
-    ERROR("Invalid closed interval for random int generator.");
+    ERROR("Invalid closed interval for random int generator (max < min).");
 
     // The formula below was taken directly from
     // http://c-faq.com/lib/randrange.html
@@ -33,15 +28,15 @@ int rp_randomint(int min, int max)
 
 void rp_swap(void *a, void *b, size_t size)
 {
-    register char swapByte;
+    register char swapbyte;
 
     char *one 	= a, 
-    *other 	= b;
+         *other = b;
 
     while (size--)
     {
-       swapByte	= *one;
+       swapbyte	= *one;
        *one++	= *other;
-       *other++	= swapByte;
+       *other++	= swapbyte;
     }
 }

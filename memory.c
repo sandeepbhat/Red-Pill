@@ -9,7 +9,7 @@ static void 	*getref(void *);
 static int 	deleteref(void *);
 static void 	updateref(void *, void *);
 static void 	clearmem(void);
-static unsigned	hash(void *);
+static unsigned	int hash(void *);
 
 
 
@@ -51,7 +51,6 @@ void *rp_realloc(void *ptr, size_t bytes, void (*errorhandler)(void *), void *ha
             errorhandler(handlerargstruct);
     }
 
-    // This should never happen. But you never know... users :-P
     if (!memoryhash)
         startmem();
 
@@ -91,14 +90,14 @@ void *rp_free(void *address)
 
 static void startmem(void)
 {
-	memoryhash 		= malloc(sizeof *memoryhash);
-	memoryhash->buckets 	= malloc(MEMORY_HASH_SIZE * sizeof *memoryhash->buckets);
+	memoryhash 	    = malloc(sizeof *memoryhash);
+	memoryhash->buckets = malloc(MEMORY_HASH_SIZE * sizeof *memoryhash->buckets);
 
 	if (!memoryhash)
 		ERROR("Memory Hash Table could not be created. Continuing would be unsafe.");
 
 	// nullify the buckets
-	unsigned i;
+	unsigned int i;
 	for (i = 0; i < MEMORY_HASH_SIZE; i++) 
 		memoryhash->buckets[i] = 0;
 
@@ -117,7 +116,7 @@ static void startmem(void)
 
 void clearmem(void)
 {
-    unsigned bucketindex;
+    unsigned int bucketindex;
 
     for (bucketindex = 0; bucketindex < MEMORY_HASH_SIZE; bucketindex++)
     {
@@ -136,19 +135,19 @@ void clearmem(void)
 
 static int deleteref(void *address)
 {
-    unsigned bucketindex = hash(address),
-        refposition = 0;
+    unsigned int bucketindex = hash(address),
+		 refposition = 0;
 
     if (!memoryhash->buckets[bucketindex])
         return 0;
 
-    bucket *previous	= NULL,
-        *current 	= memoryhash->buckets[bucketindex];
+    bucket *previous = NULL,
+	   *current  = memoryhash->buckets[bucketindex];
 
     while (current && current->address != address)
     {
-        previous	= current;
-        current 	= current->next;
+        previous = current;
+        current  = current->next;
         refposition++;
     }
 
@@ -173,17 +172,17 @@ static int deleteref(void *address)
 static int addref(void *address)
 {
     // already in the memory hash table
-    if ( getref(address) )
+    if (getref(address))
 		return 0;
 
-    unsigned bucketindex = hash(address);
+    unsigned int bucketindex = hash(address);
 
     bucket *new	= malloc(sizeof *new);
 
     if (!new)
 	ERROR(OUT_OF_MEMORY);
 
-    bucket **list = &( memoryhash->buckets[bucketindex] );
+    bucket **list = &(memoryhash->buckets[bucketindex]);
     new->address  = address;
     new->next     = *list;
     *list         = new;
@@ -196,9 +195,9 @@ static int addref(void *address)
 
 static void *getref(void *address)
 {
-    unsigned bucketindex = hash(address);
+    unsigned int bucketindex = hash(address);
 
-    if ( !memoryhash->buckets[bucketindex] )
+    if (!memoryhash->buckets[bucketindex])
         return NULL;
 
     else
@@ -229,7 +228,7 @@ static void updateref(void *oldaddr, void *newaddr)
 
 
 
-static unsigned hash(void *address)
+static unsigned int hash(void *address)
 {
 	return ((uintptr_t) address) % MEMORY_HASH_SIZE;
 }
