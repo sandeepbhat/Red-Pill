@@ -87,8 +87,8 @@ char **rp_split(char *target, char *separators)
 	
     while (current)
     {
-	current = strtok(NULL, separators);
         ret[i]  = current;
+	current = strtok(NULL, separators);
 	i      += 1;
     }
 

@@ -84,10 +84,6 @@ void *rp_free(void *address)
 
 // Internal //
 
-
-
-
-
 static void startmem(void)
 {
 	memoryhash 	    = malloc(sizeof *memoryhash);
